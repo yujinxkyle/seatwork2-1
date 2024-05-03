@@ -59,8 +59,8 @@
             }
 
 
-            $filename = 'E:\Program Files (x86)\TEKKEN 8';
-            $appname = 'TEKKEN 8';
+            $filename = 'E:\NBA.2K23.v2023.02.06\NBA.2K23.v2023.02.06\3O';
+            $appname = '3O';
             $fileSize = formatFileSize($filename);
             echo '<p><i class="fas fa-file"></i> ' . $appname . '<br><i class="fas fa-hdd"></i> File size: ' . $fileSize . '</p>';
             ?>
