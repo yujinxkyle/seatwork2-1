@@ -3,107 +3,74 @@
 <head>
     <title>Search Word in Timeline.txt File</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+        /* Existing CSS styles */
+        .file-content {
+            overflow: auto;
+            max-height: 300px; /* Adjust the height as needed */
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
         }
-
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        form {
-            text-align: center;
-            margin: 20px auto;
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            font-size: 16px;
-        }
-
-        input[type="submit"] {
-            padding: 8px 16px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-            background-color: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tr:hover {
-            background-color: #ddd;
+        .highlight {
+            background-color: yellow; /* Customize the highlight color */
         }
     </style>
 </head>
 <body>
     <h1>Search Word in Text File</h1>
+
     <form method="post">
         <input type="text" name="searchWord" placeholder="Enter a word">
         <input type="submit" value="Search">
     </form>
 
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    <div class="file-content">
+        <?php
         $filename = "C:\Users\yujin\OneDrive\Desktop\PIXELS/timeline.txt"; // Change to your text file path
-        $searchWord = $_POST["searchWord"];
 
-        try {
-            $fileHandle = fopen($filename, 'r');
-            if ($fileHandle === false) {
-                throw new Exception("Error opening the file.");
-            }
+        // Read the file
+        $fileContent = file_get_contents($filename);
+        if ($fileContent === false) {
+            echo "An error occurred while reading the file.";
+        } else {
+            // Highlight searched word if submitted with a non-empty search query
+            if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["searchWord"]) && !empty(trim($_POST["searchWord"]))) {
+                $searchWord = $_POST["searchWord"];
 
-            $lineNumber = 1;
-            $found = false;
+                // Highlight the searched word
+                $highlightedContent = preg_replace('/(' . preg_quote($searchWord, '/') . ')/i', '<span class="highlight">$1</span>', $fileContent);
 
-            echo "<h2>Search results for: " . htmlspecialchars($searchWord) . "</h2>";
-
-            while (($line = fgets($fileHandle)) !== false) {
-                if (stripos($line, $searchWord) !== false) {
-                    echo "Word found on line " . $lineNumber . ": " . htmlspecialchars($line) . "<br>";
-                    $found = true;
+                // Check if any matches were found
+                if ($highlightedContent === $fileContent) {
+                    // No matches found, keep the original content
+                    $highlightedContent = $fileContent;
                 }
-                $lineNumber++;
-            }
 
-            if (!$found) {
-                echo "Word not found in the timeline.txt file.";
+                // Display search results
+                echo nl2br($highlightedContent); // Preserve line breaks
+            } else {
+                // Display the file content without highlighting
+                echo nl2br(htmlspecialchars($fileContent));
             }
+        }
+        ?>
+    </div>
 
-            fclose($fileHandle);
-        } catch (Exception $e) {
-            echo "An error occurred: " . $e->getMessage();
+    <?php
+    // Display the "Word not found in the file." message if applicable
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["searchWord"]) && !empty(trim($_POST["searchWord"])) && $highlightedContent === $fileContent) {
+        echo "<p>Word not found in the file.</p>";
+    }
+
+    if (isset($highlightedContent) && $highlightedContent !== $fileContent) {
+        $lines = explode("\n", $fileContent);
+        foreach ($lines as $index => $line) {
+            if (stripos($line, $searchWord) !== false) {
+                echo "<p>Word '$searchWord' found on line " . ($index + 1) . ".</p>";
+            }
         }
     }
+    
     ?>
 
 </body>
