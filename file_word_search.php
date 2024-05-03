@@ -3,16 +3,66 @@
 <head>
     <title>Search Word in Timeline.txt File</title>
     <style>
-        /* Existing CSS styles */
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        h1, h2 {
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
         .file-content {
             overflow: auto;
-            max-height: 300px; /* Adjust the height as needed */
+            max-height: 300px;
             border: 1px solid #ccc;
             padding: 10px;
             margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .highlight {
-            background-color: yellow; /* Customize the highlight color */
+            background-color: yellow;
+        }
+
+        p {
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+
+        .not-found {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -23,7 +73,8 @@
         <input type="text" name="searchWord" placeholder="Enter a word">
         <input type="submit" value="Search">
     </form>
-
+    <br>        
+    <h2>Timeline.txt</h2>
     <div class="file-content">
         <?php
         $filename = "C:\Users\yujin\OneDrive\Desktop\PIXELS/timeline.txt"; // Change to your text file path
@@ -59,7 +110,7 @@
     <?php
     // Display the "Word not found in the file." message if applicable
     if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["searchWord"]) && !empty(trim($_POST["searchWord"])) && $highlightedContent === $fileContent) {
-        echo "<p>Word not found in the file.</p>";
+        echo "<p class='not-found'>Word '$searchWord' not found in the file.</p>";
     }
 
     if (isset($highlightedContent) && $highlightedContent !== $fileContent) {
@@ -70,7 +121,7 @@
             }
         }
     }
-    
+
     ?>
 
 </body>
